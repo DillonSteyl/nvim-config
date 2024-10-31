@@ -105,6 +105,9 @@ vim.opt.relativenumber = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
+-- Default Tabstop
+vim.opt.tabstop = 4
+
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
@@ -652,6 +655,11 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      function setup_server(server_name, server)
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        require('lspconfig')[server_name].setup(server)
+      end
+
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
@@ -659,11 +667,18 @@ require('lazy').setup({
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            setup_server(server_name, server)
           end,
         },
       }
+
+      local non_mason_servers = {
+        gdscript = {},
+      }
+
+      for server_name, server in pairs(non_mason_servers) do
+        setup_server(server_name, server)
+      end
     end,
   },
 
