@@ -205,6 +205,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Setup pyright to recognize pyenv virtualenvs
+vim.env.PYENV_VERSION = vim.fn.system('pyenv version'):match '(%S+)%s+%(.-%)'
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
